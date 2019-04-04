@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 public class FunctionalMain {
 
 	public FunctionalMain() {
+		// fundamental functional + java 8 concepts
 		countItems(Arrays.asList("888", "999", "555", "777", "222", "444"));
 		List<Integer> intList = Arrays.asList(55, 33, 77, 88, 55, 22);
 		listContains(intList);
@@ -25,10 +26,14 @@ public class FunctionalMain {
 		certainSheepLists("curly");
 		mapSheepToNameList();
 		convertAnArrayOfOldSheep();
-		reduceExample();
+		reduceExampleAndGrouping();
 		optionalUsage();
-		streamExamples();
+		otherStreamSyntaxAndFlatMappingToStreams();
 		justInTime();
+		// TODO: string joiner
+				
+		new MapLooper();
+		new BadPass();
 	}
 	
 /*
@@ -46,12 +51,10 @@ Practice basics:
 - look at class StatisticsUtility
 - usage of Optional 	
 - what is the difference between map and flat map? 	 	
-
- 	 	
- 	 	
 - format the default local date time now
 - create a specific local date and format it 	
 - create a specific local date time and format it 	
+
 
 - identify 6 ways to iterate through a map these days:
   https://www.codingame.com/playgrounds/6162/6-ways-to-iterate-or-loop-a-map-in-java
@@ -59,13 +62,13 @@ Practice basics:
 */
 	
 	
-	private void streamExamples() {
+	private void otherStreamSyntaxAndFlatMappingToStreams() {
 		System.out.print("\nInt list woz 'ere: \n");
 		List<Integer> intList = Stream.of('1', '2', '3').map(ch -> Integer.parseInt(ch.toString())).collect(Collectors.toList());
 		intList.forEach(n->System.out.print(" " + n));
 		
 		
-		System.out.print("\nFlatten a stream of lists: saves having to loop through each list individually as in Java 7\n");
+		System.out.print("\nFLAT MAP: Flatten a stream of lists, to avoid having to loop through each list individually as in Java 7\n");
 		Stream<List<Integer>> integerListStream = Stream.of(
 				  Arrays.asList(1, 2), 
 				  Arrays.asList(3, 4), 
@@ -77,7 +80,8 @@ Practice basics:
 
 	
 	
-	// OPTIONAL:  remember to use Optional.ofNullable(Sheep); + sheep.ifPresent(Consumer)
+	// OPTIONAL:  remember to use Optional.ofNullable(Sheep); + sheep.ifPresent(Consumer - some void act)
+	//            Optional.of() will throw a NullPointer if the argument is null
 	private void optionalUsage() {
 		Optional<Sheep> sheep = getRandomSheep();
 		sheep.ifPresent(s-> System.out.println("\n\nSelected sheep: " + s.getName()));
@@ -88,9 +92,10 @@ Practice basics:
 	    String name = Optional.ofNullable(nullName).orElse("john");
 	}
 	
-	
-	// note mapToInt() maps to an IntStream
-	private void reduceExample() {
+		
+	// note mapToInt() maps to an IntStream, and from that get SummaryStatistics for the integer
+	// SummaryStatistics.getCount(); summary.getSum(); summary.getMax(); summary.getMin();
+	private void reduceExampleAndGrouping() {
 		Sheep[] sheepArr = new Sheep[] {new Sheep(1, "black", "fine", "Mildy", 88), new Sheep(8, "blue", "steely", "Gertrude", 54),
 				new Sheep(2, "white", "curly", "Tolly", 101), new Sheep(3, "blue", "straight", "Savvy", 333)};
 		int totalFlockAge = Arrays.stream(sheepArr).mapToInt(Sheep::getAge).sum();
@@ -321,17 +326,23 @@ Practice basics:
     
     
     
-//    - format the default local date time now
-//    - create a specific local date and format it 	
-//    - create a specific local date time and format it 	
-// time zone specific
-    
-    
-    // advantages:  1) consistent parameters y/m/d  2) made immutable 3) locale simplified
+    // Advantages:  1) consistent parameters y/m/d  
+    //              2) made immutable so are threadsafe (ie. another thread cannot change the value of a date) 
+    //              3) locale simplified with ZoneId
+    //              4) allows thread chaining, with methods returning the updated time
+    /*
+     			ZonedDateTime nextFriday = LocalDateTime.now()
+  												.plusHours(1)
+  												.with(TemporalAdjusters.next(DayOfWeek.FRIDAY))
+  												.atZone(ZoneId.of("PST"));
+     */
+    // List of regions: https://docs.oracle.com/javase/8/docs/api/java/time/ZoneId.html
+    //                  it seems the exact country can be specified (certainly within Europe)
     private void justInTime() {
     	DateTimeFormatter trustyFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss"); 
     	DateTimeFormatter miniFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
     	
+    	//ZonedDateTime krTime = LocalDateTime.now().atZone(ZoneId.of("Europe/Berlin"));
     	ZonedDateTime krTime = LocalDateTime.now().atZone(ZoneId.of("Europe/Berlin"));
     	System.out.println("\n\nTime in Berlin: " + trustyFormatter.format(krTime));
 
@@ -349,6 +360,9 @@ Practice basics:
     	System.out.println("Current date: " + miniFormatter.format(date));
     	date = LocalDate.parse("2018-02-13").plus(3, ChronoUnit.MONTHS);
     	System.out.println("Current date: " + miniFormatter.format(date));
+    	
+    	LocalDateTime specificTime = LocalDateTime.of(1987, 8, 21, 18, 30, 12);
+    	System.out.println("Specific time: " + trustyFormatter.format(specificTime));
     }
         
 	
