@@ -36,7 +36,7 @@ public class FunctionalMain {
 		new BadPass();
 		new StringAndListUtilities();
 		new SadInterfaceChanges();
-		
+		new ConcurrentModificationExample().myTest();
 	}
 	
 /*
