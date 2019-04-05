@@ -34,6 +34,9 @@ public class FunctionalMain {
 				
 		new MapLooper();
 		new BadPass();
+		new StringAndListUtilities();
+		new SadInterfaceChanges();
+		
 	}
 	
 /*
